@@ -13,29 +13,27 @@ def getNextUrl(soup, current_url):
     return next_page
 
 
-def getCurrentInfo(res_data, soup):
+def getCurrentInfo(link_list, time_list, title_list, local_list, soup):
     if soup is None:
         return None
+
     link_base = 'http://jiuye.www.sust.edu.cn'
     links = soup.find_all('a', href=re.compile(r"/new.jsp?"))
     for link in links:
         new_url = link['href']
+        title_list.append(link['title'])
         new_full_url = urlparse.urljoin(link_base, new_url)
-        res_data['url'] = new_full_url
-        res_data['title'] = link['title']
-        #print new_full_url
-        #print link['title']
+        link_list.append(new_full_url)
 
     times = soup.find_all('td', width='20%')
     for time in times:
-        res_data.add(times)
-        #print time.get_text()
-
+        t = time.get_text().strip()
+        time_list.append(t)
     locals = soup.find_all('td', width='30%')
     for local in locals:
-        res_data['local'] = local.get_text()
-        #print local.get_text()
+        local_list.append(local.get_text())
 
+    return link_list, time_list, title_list, local_list
 
 def getNextSoup(next_page):
     if next_page is None:
@@ -81,21 +79,28 @@ if __name__ == '__main__':
 
     res_data = {}
     next_page_base = 'http://jiuye.www.sust.edu.cn/zph.jsp'
-    current_url = root_url
+    link_list = list()
+    title_list = list()
+    time_list = list()
+    local_list = list()
+
+
     i = 0
     while i < 3:
-        getCurrentInfo(res_data, soup)
-        print res_data['title']
-        print res_data['time']
-        print res_data['local']
-
-        next_page = getNextUrl(soup, current_url)
-        print next_page['href']
+        getCurrentInfo(link_list, time_list, title_list, local_list, soup)
+        res_data.
+        for link in link_list:
+            print link
+        for title in title_list:
+            print title
+        for time in time_list:
+            print time
+        for local in local_list:
+            print local
         i+=3
 
     #outputHtml(res_data)
     #找到前三页的网址
-    #top_three = list
     #http://jiuye.www.sust.edu.cn/zph.jsp?a47862t=239&a47862p=2&a47862c=15&urltype=tree.TreeTempUrl&wbtreeid=1003
     #                                    ?a47862t=239&a47862p=2&a47862c=15&urltype=tree.TreeTempUrl&wbtreeid=1003
     #首先解析 root_url
